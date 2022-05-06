@@ -36,5 +36,5 @@ class DataProcess:
         return df
 
     def postprocess(self, preds: np.ndarray) -> np.ndarray:
+        return preds
         # return self.scaler.inverse_transform(preds)
-        pass

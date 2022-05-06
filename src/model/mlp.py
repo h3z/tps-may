@@ -24,6 +24,6 @@ class Model(nn.Module):
         x = F.relu(self.bn3(self.fc3(x)))
         x = F.relu(self.bn4(self.fc4(x)))
         x = F.relu(self.bn5(self.fc5(x)))
-        x = F.sigmoid(self.fc6(x))
+        x = torch.sigmoid(self.fc6(x))
 
-        return x
+        return x.squeeze()
