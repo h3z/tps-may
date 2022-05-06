@@ -22,6 +22,17 @@ class DataProcess:
             )
         )
 
+        t1 = pd.get_dummies(df["f_27"].str[0])
+        t1.columns = ["f_27_0_A", "f_27_0_B"]
+
+        t2 = pd.get_dummies(df["f_27"].str[2])
+        t2.columns = ["f_27_2_A", "f_27_2_B"]
+
+        t3 = pd.get_dummies(df["f_27"].str[5])
+        t3.columns = ["f_27_5_A", "f_27_5_B"]
+
+        df = df.drop(columns="f_27").join(t1.join(t2).join(t3))
+
         return df
 
     def postprocess(self, preds: np.ndarray) -> np.ndarray:

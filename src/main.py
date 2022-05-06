@@ -12,8 +12,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def get_parameters():
     return {
-        "~lr": 0.001,
-        "~batch_size": 128,
+        "~lr": 0.01,
+        "~batch_size": 256,
         "~epochs": 200,
         "~early_stopping_patience": 3,
         "~optimizer": "adam",
@@ -44,7 +44,7 @@ def main():
     val_ds = data_loader.DataLoader(val_df).get()
     test_ds = data_loader.DataLoader(test_df).get()
 
-    model = models.get()
+    model = models.get(len(set(train_df.columns) - {"id", "target"}))
 
     # train
     criterion = losses.get()

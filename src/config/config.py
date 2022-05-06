@@ -1,5 +1,5 @@
 PROJECT_NAME = "tps-may"
-ONLINE = True
+ONLINE = False
 
 RANDOM_STATE = 42
 

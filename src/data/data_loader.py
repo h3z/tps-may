@@ -11,7 +11,7 @@ class DataLoader:
         def __init__(self, x: np.ndarray, y: np.ndarray):
             self.x = x
             self.y = y
-            self.len = len(self.data)
+            self.len = len(self.x)
 
         def __getitem__(self, index):
             x = self.x[index]
@@ -23,7 +23,7 @@ class DataLoader:
 
     class Sampler(torch.utils.data.Sampler):
         def __init__(self, l: int, shuffle: bool) -> None:
-            super().__init__()
+            super().__init__(l)
             self.len = l
             self.shuffle = shuffle
 
