@@ -9,6 +9,20 @@ class DataProcess:
         self.numerical_cols = [f"f_{i:02d}" for i in range(27)] + ["f_28"]
         self.scaler.fit(df[self.numerical_cols].values)
 
+        self.fe1_init(df)
+
+    # 14, 19, 23, 25, 28 => (x - mean) ** 2
+    # good: 28 > 23 > 25
+    def fe1_init(self, df: pd.DataFrame):
+        self.fe1_cols = [f"f_{i:02d}" for i in [14, 19, 23, 25, 28]]
+        self.fe1_means = {col: df[col].mean() for col in self.fe1_cols}
+
+    def fe1(self, df: pd.DataFrame):
+        for col in self.fe1_cols:
+            new_col = f"{col}_diff_square"
+            df[new_col] = (df[col] / self.fe1_means[col] - 1) ** 2
+        return df
+
     def preprocess(self, df: pd.DataFrame) -> pd.DataFrame:
         df[self.numerical_cols] = self.scaler.transform(df[self.numerical_cols].values)
 
@@ -32,6 +46,9 @@ class DataProcess:
         t3.columns = ["f_27_5_A", "f_27_5_B"]
 
         df = df.drop(columns="f_27").join(t1.join(t2).join(t3))
+
+        # FE
+        # df = self.fe1(df)
 
         return df
 

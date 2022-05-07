@@ -13,9 +13,9 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def get_parameters():
     return {
-        "~lr": 0.001,
-        "~batch_size": 512,
-        "~epochs": 200,
+        "~lr": 0.01,
+        "~batch_size": 1024,
+        "~epochs": 30,
         "~early_stopping_patience": 3,
         "~optimizer": "adam",
         "~loss": "bce",
@@ -26,8 +26,9 @@ class TMP:
     def __init__(self) -> None:
         self.aaa = datetime.now()
 
-    def ppp(self, i):
-        print(i, datetime.now() - self.aaa)
+    def ppp(self, i=None):
+        if i:
+            print(i, datetime.now() - self.aaa)
         self.aaa = datetime.now()
 
 
@@ -38,24 +39,23 @@ def main():
     tmp.ppp(1)
     wandb.init(config=get_parameters(), **config.__wandb__)
     print(wandb.config)
-    tmp.ppp(2)
+    tmp.ppp("wandb init")
 
     # read csv
     dr = data_reader.DataReader()
     df = dr.train
-    tmp.ppp(3)
 
     # split
     train_df, val_df, _ = data_split.split(df)
     test_df = dr.test
-    tmp.ppp(4)
 
     # preprocess
+    tmp.ppp()
     processor = data_process.DataProcess(train_df)
     train_df = processor.preprocess(train_df)
     val_df = processor.preprocess(val_df)
     test_df = processor.preprocess(test_df)
-    tmp.ppp(5)
+    tmp.ppp("preprocess")
 
     # torch DataLoader
     train_ds = data_loader.DataLoader(train_df).get(is_train=True)
@@ -63,15 +63,14 @@ def main():
     test_ds = data_loader.DataLoader(test_df).get()
 
     model = models.get(len(set(train_df.columns) - {"id", "target"}))
-    tmp.ppp(6)
+    tmp.ppp("model to cuda")
 
     # train
     criterion = losses.get()
     optimizer = optimizers.get(model)
     scheduler = schedulers.get(optimizer, train_ds)
+    # scheduler = None
     callbacks = [early_stopping.EarlyStopping(), wandb_callback.WandbCallback()]
-
-    tmp.ppp(7)
 
     for epoch in range(wandb.config["~epochs"]):
         loss = train.epoch_train(
@@ -96,6 +95,7 @@ def main():
     dr.submit(preds.squeeze())
 
     wandb.finish()
+    tmp.ppp("final")
 
 
 if __name__ == "__main__":
