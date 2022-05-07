@@ -18,7 +18,7 @@ def get_parameters():
         "~epochs": 200,
         "~early_stopping_patience": 3,
         "~optimizer": "adam",
-        "~loss": "sigmoid",
+        "~loss": "bce",
     }
 
 

@@ -51,8 +51,10 @@ def epoch_val(
         pred_y = model(batch_x)
         loss = criterion(pred_y, batch_y)
         losses.append(loss.item())
-        [cb.on_val_batch_end(pred_y, batch_y, loss.item()) for cb in callbacks]
 
+        # TODO 非训练数据不需要分 batch，但我不知道怎么让 dataloader 直接返回全部数据。所以现在是用一个 batch 返回全部数据
+        [cb.on_val_end(pred_y, batch_y, loss.item()) for cb in callbacks]
+        break
     return np.mean(losses)
 
 
@@ -67,6 +69,9 @@ def predict(model: torch.nn.Module, test_loader):
 
         preds.append(pred_y.cpu().detach().numpy())
         gts.append(batch_y.cpu().detach().numpy())
+
+        # TODO 非训练数据不需要分 batch，但我不知道怎么让 dataloader 直接返回全部数据。所以现在是用一个 batch 返回全部数据
+        break
 
     preds = np.array(preds)
     preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])

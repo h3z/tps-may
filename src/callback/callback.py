@@ -6,7 +6,7 @@ class Callback:
     def __init__(self) -> None:
         pass
 
-    def on_val_batch_end(self, preds: np.ndarray, gts: np.ndarray, loss):
+    def on_val_end(self, preds: np.ndarray, gts: np.ndarray, loss):
         pass
 
     def on_train_batch_end(self, preds: np.ndarray, gts: np.ndarray, loss):
