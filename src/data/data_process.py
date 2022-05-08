@@ -9,7 +9,7 @@ class DataProcess:
         self.numerical_cols = [f"f_{i:02d}" for i in range(27)] + ["f_28"]
         self.scaler.fit(df[self.numerical_cols].values)
 
-        self.fe1_init(df)
+        # self.fe1_init(df)
 
     # 14, 19, 23, 25, 28 => (x - mean) ** 2
     # good: 28 > 23 > 25
@@ -26,6 +26,7 @@ class DataProcess:
     def preprocess(self, df: pd.DataFrame) -> pd.DataFrame:
         df[self.numerical_cols] = self.scaler.transform(df[self.numerical_cols].values)
 
+        # f_29, f_30 -> onehot
         df = df.drop(columns="f_29").join(
             pd.get_dummies(df["f_29"]).rename(columns={0: "f_29_0", 1: "f_29_1"})
         )
@@ -36,6 +37,11 @@ class DataProcess:
             )
         )
 
+        # FE
+        # f_14, f_19, f_23, f_25, f_28 -> (x - mean) ** 2
+        # df = self.fe1(df)
+
+        # f_27 -> onehot 0, 2, 5 th char
         t1 = pd.get_dummies(df["f_27"].str[0])
         t1.columns = ["f_27_0_A", "f_27_0_B"]
 
@@ -45,10 +51,16 @@ class DataProcess:
         t3 = pd.get_dummies(df["f_27"].str[5])
         t3.columns = ["f_27_5_A", "f_27_5_B"]
 
-        df = df.drop(columns="f_27").join(t1.join(t2).join(t3))
+        # df = df.join(t1.join(t2).join(t3))
 
-        # FE
-        # df = self.fe1(df)
+        # https://www.kaggle.com/code/ambrosm/tpsmay22-gradient-boosting-quickstart/notebook
+        # f_27 -> each char to ord
+        # f_27 -> nunique
+        for i in range(10):
+            df[f"f_27_{i}_int"] = df.f_27.str[i].map(ord) - ord("A")
+        df[f"f_27_nunique"] = df.f_27.apply(lambda c: len(set(c)))
+
+        df = df.drop(columns="f_27")
 
         return df
 

@@ -15,8 +15,8 @@ def get_parameters():
     return {
         "~lr": 0.01,
         "~batch_size": 1024,
-        "~epochs": 30,
-        "~early_stopping_patience": 3,
+        "~epochs": 100,
+        "~early_stopping_patience": 20,
         "~optimizer": "adam",
         "~loss": "bce",
     }
