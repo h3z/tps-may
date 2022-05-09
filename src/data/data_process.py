@@ -7,6 +7,8 @@ class DataProcess:
     def __init__(self, df: pd.DataFrame) -> None:
         self.scaler = StandardScaler()
         self.numerical_cols = [f"f_{i:02d}" for i in range(27)] + ["f_28"]
+        self.float_cols = [i for i in df.columns if df[i].dtype == "float64"]
+        print("float features: ", self.float_cols)
         self.scaler.fit(df[self.numerical_cols].values)
 
         # self.fe1_init(df)
@@ -54,6 +56,7 @@ class DataProcess:
         # df = df.join(t1.join(t2).join(t3))
 
         # https://www.kaggle.com/code/ambrosm/tpsmay22-gradient-boosting-quickstart/notebook
+        # https://www.kaggle.com/code/ambrosm/tpsmay22-eda-which-makes-sense
         # f_27 -> each char to ord
         # f_27 -> nunique
         for i in range(10):
@@ -61,6 +64,17 @@ class DataProcess:
         df[f"f_27_nunique"] = df.f_27.apply(lambda c: len(set(c)))
 
         df = df.drop(columns="f_27")
+
+        # stats features
+        # https://www.kaggle.com/code/cv13j0/tps-may22-eda-neuronal-nets/notebook
+        df["f_sum"] = df[self.float_cols].sum(axis=1)
+        df["f_min"] = df[self.float_cols].min(axis=1)
+        df["f_max"] = df[self.float_cols].max(axis=1)
+        df["f_mean"] = df[self.float_cols].mean(axis=1)
+        df["f_std"] = df[self.float_cols].std(axis=1)
+        df["f_mad"] = df[self.float_cols].mad(axis=1)
+        df["f_kurt"] = df[self.float_cols].kurt(axis=1)
+        df["f_count_pos"] = df[self.float_cols].gt(0).count(axis=1)
 
         return df
 

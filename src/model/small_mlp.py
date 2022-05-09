@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+import wandb
 
 
 class Model(nn.Module):
@@ -13,11 +14,15 @@ class Model(nn.Module):
         self.fc5 = nn.Linear(128, 32)
         self.bn5 = nn.BatchNorm1d(32)
         self.fc6 = nn.Linear(32, 1)
+        if wandb.config["activation"] == "relu":
+            self.activation = F.relu
+        elif wandb.config["activation"] == "swish":
+            self.activation = F.silu
 
     def forward(self, x):
-        x = F.relu(self.bn1(self.fc1(x)))
-        x = F.relu(self.bn2(self.fc2(x)))
-        x = F.relu(self.bn5(self.fc5(x)))
+        x = self.activation(self.bn1(self.fc1(x)))
+        x = self.activation(self.bn2(self.fc2(x)))
+        x = self.activation(self.bn5(self.fc5(x)))
         x = torch.sigmoid(self.fc6(x))
 
         return x.squeeze()

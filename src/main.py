@@ -8,17 +8,18 @@ from config import config
 from datetime import datetime
 
 utils.fix_random()
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 def get_parameters():
     return {
         "~lr": 0.01,
-        "~batch_size": 1024,
-        "~epochs": 100,
-        "~early_stopping_patience": 20,
+        "~batch_size": 4096,
+        "~epochs": 60,
+        "~early_stopping_patience": 6,
         "~optimizer": "adam",
         "~loss": "bce",
+        "activation": "swish",  # relu, swish
+        "model": "baseline",  # baseline, rm_batchnorm
     }
 
 
